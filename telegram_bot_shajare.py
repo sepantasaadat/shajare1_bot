@@ -5,7 +5,7 @@ import os
 import asyncio
 CHANNEL_NAME = "شجره"
 POSTS_FILE = "posts.json"
-BOT_TOKEN = "8549850754:AAHplEUEuK21cEwwOhbTtSPlFbaUetlmS7M"
+BOT_TOKEN = os.environ.get("8549850754:AAHplEUEuK21cEwwOhbTtSPlFbaUetlmS7M")
 
 def load_posts(path: str):
     if not os.path.exists(path):
@@ -36,8 +36,9 @@ async def send_post(chat_id: int, post: dict, context: ContextTypes.DEFAULT_TYPE
 
     else:
         await context.bot.send_message(chat_id, text=f"نوع پست پشتیبانی نمی‌شود: {typ}")
+
+def make_levels_keyboard():
     
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("level1", callback_data="level1")],
         [InlineKeyboardButton("level2", callback_data="level2")],
@@ -45,28 +46,46 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("level4", callback_data="level4")],
         [InlineKeyboardButton("level5", callback_data="level5")],
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    return InlineKeyboardMarkup(keyboard)
+
+
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    reply_markup = make_levels_keyboard()
     await update.message.reply_text(
         f"سلام! کانال: {CHANNEL_NAME}\nیک سطح انتخاب کنید:",
         reply_markup=reply_markup
     )
+
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    data = query.data 
+    data = query.data
+
     posts = context.bot_data.get("posts", {})
-    level_posts = posts.get(data, [])    
+    level_posts = posts.get(data, [])
+
     if not level_posts:
         await query.edit_message_text(text=f"برای {data} پستی تعریف نشده است.")
+        await context.bot.send_message(
+            query.message.chat_id,
+            text="یک سطح دیگر انتخاب کنید:",
+            reply_markup=make_levels_keyboard()
+        )
         return
+
     await query.edit_message_text(text=f"در حال ارسال {len(level_posts)} پست از {data}...")
 
     for p in level_posts:
         await send_post(query.message.chat_id, p, context)
-        await asyncio.sleep(0.5) 
-
+        await asyncio.sleep(0.5)
 
     await context.bot.send_message(query.message.chat_id, text="ارسال پست‌ها تمام شد.")
+    await context.bot.send_message(
+        query.message.chat_id,
+        text="یک سطح دیگر انتخاب کنید:",
+        reply_markup=make_levels_keyboard()
+    )
+
 
 def main():
     posts = load_posts(POSTS_FILE)
