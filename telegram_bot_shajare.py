@@ -5,7 +5,7 @@ import os
 import asyncio
 CHANNEL_NAME = "شجره"
 POSTS_FILE = "posts.json"
-BOT_TOKEN = "8549850754:AAENYIntMeIW8vZjenAfGyu7jB6lAH3Y1jU"
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 ALBUMS_DATA = {
     "نسیم وصل": "alb_nasim_vasl",
