@@ -27,7 +27,9 @@ ALBUMS_DATA = {
     "ایران من": "alb_iran_man",
     "افسانه چشمهایت": "alb_afsane_cheshmhayat",
     "گاه فراموشی": "alb_gah_faramoshi",
-    "شین میم سین": "alb_shin_mim_sin"
+    "شین میم سین": "alb_shin_mim_sin",
+    "با ستاره ها": "alb_ba_setareha",
+    "شوق دوست": "alb_shogh_doost"
 }
 
 def load_posts(path: str):
