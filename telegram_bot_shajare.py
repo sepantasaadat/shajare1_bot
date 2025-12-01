@@ -24,13 +24,13 @@ ALBUMS_DATA = {
     "مستور و مست": "alb_mastor_mast",
     "خداوندان اسرار": "alb_khodavandan_asrar",
     "رگ خواب": "alb_rag_khab",
-    "امشب کنار غزل های من بخواب": "alb_emshab_kenar_ghazal",
+    "شوق دوست": "alb_shogh_doost",
     "ایران من": "alb_iran_man",
     "افسانه چشمهایت": "alb_afsane_cheshmhayat",
     "گاه فراموشی": "alb_gah_faramoshi",
     "شین میم سین": "alb_shin_mim_sin",
     "با ستاره ها": "alb_ba_setareha",
-    "شوق دوست": "alb_shogh_doost"
+    "امشب کنار غزل های من بخواب": "alb_emshab_kenar_ghazal"
 }
 
 def load_posts(path: str):
@@ -72,7 +72,7 @@ def make_main_menu_keyboard():
         [InlineKeyboardButton("🎲 فال همایونی (پخش تصادفی)", callback_data="fale_homayouni")],
         
         [InlineKeyboardButton("🔍 جستجوی پیشرفته", callback_data="search_guide"),
-         InlineKeyboardButton("📞 تماس با ما", callback_data="contact_us")]
+         InlineKeyboardButton("📞 ارتباط با ما", callback_data="contact_us")]
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -177,6 +177,12 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         random_post = random.choice(all_posts)
         await context.bot.send_message(query.message.chat_id, text="🎲 نیت کنید... فال شما آمد:")
         await send_post(query.message.chat_id, random_post, context)
+        await asyncio.sleep(1)  
+        await context.bot.send_message(
+            query.message.chat_id,
+            text="بازگشت به منوی اصلی:",
+            reply_markup=make_main_menu_keyboard()
+        )
         return
 
     posts = context.bot_data.get("posts", {})
