@@ -1,3 +1,4 @@
+import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 import json
@@ -42,27 +43,35 @@ def load_posts(path: str):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-async def send_post(chat_id: int, post: dict, context: ContextTypes.DEFAULT_TYPE):
+async def send_post(chat_id: int, post: dict, context: ContextTypes.DEFAULT_TYPE, max_retries: int = 3):
     typ = post.get("type", "text")
-    if typ == "text":
-        await context.bot.send_message(chat_id, text=post.get("content", ""))
-    elif typ == "photo":
-        await context.bot.send_photo(chat_id, photo=post.get("content"), caption=post.get("caption"))
-    elif typ == "document":
-        await context.bot.send_document(chat_id, document=post.get("content"), caption=post.get("caption"))
-    elif typ == "forward":
-        from_chat = post.get("from_chat_id")
-        msg_id = post.get("message_id")
-        if not from_chat or not msg_id:
-            await context.bot.send_message(chat_id, text="تنظیمات فوروارد نادرست است: from_chat_id یا message_id وجود ندارد.")
-            return
+    for attempt in range(max_retries):
         try:
-            await context.bot.forward_message(chat_id, from_chat_id=from_chat, message_id=msg_id)
+            if typ == "text":
+                await context.bot.send_message(chat_id, text=post.get("content", ""))
+            elif typ == "photo":
+                await context.bot.send_photo(chat_id, photo=post.get("content"), caption=post.get("caption"))
+            elif typ == "document":
+                await context.bot.send_document(chat_id, document=post.get("content"), caption=post.get("caption"))
+            elif typ == "forward":
+                from_chat = post.get("from_chat_id")
+                msg_id = post.get("message_id")
+                if not from_chat or not msg_id:
+                    await context.bot.send_message(chat_id, text="تنظیمات فوروارد نادرست است: from_chat_id یا message_id وجود ندارد.")
+                    return
+                await context.bot.forward_message(chat_id, from_chat_id=from_chat, message_id=msg_id)
+            else:
+                await context.bot.send_message(chat_id, text=f"نوع پست پشتیبانی نمی‌شود: {typ}")
+            return  # Success - exit the retry loop
+        except telegram.error.RetryAfter as e:
+            wait_time = e.retry_after + 1
+            print(f"Rate limit hit! Waiting {wait_time} seconds...")
+            await asyncio.sleep(wait_time)
+        except telegram.error.TimedOut:
+            await asyncio.sleep(2 ** attempt)
         except Exception as e:
-            await context.bot.send_message(chat_id, text=f"خطا در فوروارد پیام: {e}")
-
-    else:
-        await context.bot.send_message(chat_id, text=f"نوع پست پشتیبانی نمی‌شود: {typ}")
+            await context.bot.send_message(chat_id, text=f"خطا در ارسال پیام: {e}")
+            return
 
 def make_main_menu_keyboard():
     keyboard = [
@@ -209,9 +218,12 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
     await query.edit_message_text(text=f"در حال ارسال {len(level_posts)} پست از {display_name}...")
 
-    for p in level_posts:
+    for i, p in enumerate(level_posts):
         await send_post(query.message.chat_id, p, context)
-        await asyncio.sleep(0.5)
+        if (i + 1) % 20 == 0:
+            await asyncio.sleep(3)  # longer pause every 20 messages
+        else:
+            await asyncio.sleep(1.0)
 
     await context.bot.send_message(query.message.chat_id, text="ارسال پست‌ها تمام شد.")
     
@@ -252,7 +264,7 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text(f"✅ تعداد {len(found_posts)} مورد پیدا شد:")
         for p in found_posts[:5]: 
             await send_post(update.message.chat_id, p, context)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(1.0)
         
         await update.message.reply_text(
             "پایان نتایج جستجو.",
