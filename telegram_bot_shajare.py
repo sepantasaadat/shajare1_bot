@@ -1,12 +1,15 @@
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 import json
 import os
 import asyncio
 import random
+
 CHANNEL_NAME = "شجره"
-POSTS_FILE = "posts.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+POSTS_FILE = os.path.join(BASE_DIR, "posts.json")
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 ALBUMS_DATA = {
@@ -30,7 +33,6 @@ ALBUMS_DATA = {
     "افسانه چشمهایت": "alb_afsane_cheshmhayat",
     "گاه فراموشی": "alb_gah_faramoshi",
     "شین میم سین": "alb_shin_mim_sin",
-    "با ستاره ها": "alb_ba_setareha",
     "امشب کنار غزل های من بخواب": "alb_emshab_kenar_ghazal"
 }
 
@@ -75,24 +77,36 @@ async def send_post(chat_id: int, post: dict, context: ContextTypes.DEFAULT_TYPE
 
 def make_main_menu_keyboard():
     keyboard = [
-        [InlineKeyboardButton("📂 سطوح (Levels)", callback_data="show_levels_menu"),
-         InlineKeyboardButton("🎵 آلبوم‌ها", callback_data="show_albums_menu")],
-        
-        [InlineKeyboardButton("🎲 فال همایونی (پخش تصادفی)", callback_data="fale_homayouni")],
-        
-        [InlineKeyboardButton("🔍 جستجوی پیشرفته", callback_data="search_guide"),
-         InlineKeyboardButton("📞 ارتباط با ما", callback_data="contact_us")]
+        [
+            InlineKeyboardButton("🗂 سطوح آرشیو", callback_data="show_levels_menu"),
+            InlineKeyboardButton("🎵 آلبوم‌ها", callback_data="show_albums_menu")
+        ],
+        [
+            InlineKeyboardButton("🪶 فال همایونی (نغمه تصادفی)", callback_data="fale_homayouni")
+        ],
+        [
+            InlineKeyboardButton("🔍 جستجوی اثر", callback_data="search_guide"),
+            InlineKeyboardButton("📩 پیام به مدیریت", callback_data="contact_us")
+        ]
     ]
     return InlineKeyboardMarkup(keyboard)
 
 def make_levels_keyboard():
     keyboard = [
-        [InlineKeyboardButton("level1", callback_data="level1")],
-        [InlineKeyboardButton("level2", callback_data="level2")],
-        [InlineKeyboardButton("level3", callback_data="level3")],
-        [InlineKeyboardButton("level4", callback_data="level4")],
-        [InlineKeyboardButton("level5", callback_data="level5")],
-        [InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")],
+        [
+            InlineKeyboardButton("▫️ سطح ۱", callback_data="level1"),
+            InlineKeyboardButton("▫️ سطح ۲", callback_data="level2")
+        ],
+        [
+            InlineKeyboardButton("▫️ سطح ۳", callback_data="level3"),
+            InlineKeyboardButton("▫️ سطح ۴", callback_data="level4")
+        ],
+        [
+            InlineKeyboardButton("▫️ سطح ۵", callback_data="level5")
+        ],
+        [
+            InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")
+        ]
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -100,7 +114,7 @@ def make_albums_keyboard():
     keyboard = []
     row = []
     for persian_name, callback_id in ALBUMS_DATA.items():
-        btn = InlineKeyboardButton(persian_name, callback_data=callback_id)
+        btn = InlineKeyboardButton(f"💿 {persian_name}", callback_data=callback_id)
         row.append(btn)
 
         if len(row) == 2:
@@ -115,10 +129,15 @@ def make_albums_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply_markup = make_main_menu_keyboard()
+    welcome_text = (
+        f"🌿 <b>به گنجینه صوتی «{CHANNEL_NAME}» خوش آمدید</b> 🌿\n"
+        "<i>آرشیو و راهنمای آثار استاد همایون شجریان</i>\n\n"
+        "لطفاً بخش یا نغمه مورد نظر خود را از منوی زیر انتخاب نمایید:"
+    )
     await update.message.reply_text(
-        f"سلام! به کانال {CHANNEL_NAME} خوش آمدید.\nلطفاً از منوی زیر انتخاب کنید:",
-        reply_markup=reply_markup
+        text=welcome_text,
+        reply_markup=make_main_menu_keyboard(),
+        parse_mode=ParseMode.HTML
     )
 
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -128,40 +147,67 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if data == "back_to_main":
         await query.edit_message_text(
-            text=f"به کانال: {CHANNEL_NAME} خوش آمدید\nمنوی اصلی:",
-            reply_markup=make_main_menu_keyboard()
+            text=(
+                f"🌿 <b>گنجینه صوتی «{CHANNEL_NAME}»</b>\n\n"
+                "برای ادامه، بخش مورد نظر خود را از منوی اصلی برگزینید:"
+            ),
+            reply_markup=make_main_menu_keyboard(),
+            parse_mode=ParseMode.HTML
         )
         return
 
     if data == "show_levels_menu":
         await query.edit_message_text(
-            text="لطفاً سطح (Level) مورد نظر را انتخاب کنید:",
-            reply_markup=make_levels_keyboard()
+            text=(
+                "🗂 <b>سطوح آرشیو آثار</b>\n\n"
+                "آرشیو کانال بر اساس دوره‌ها و سطوح مختلف دسته‌بندی شده است.\n"
+                "لطفاً سطح مورد نظر را انتخاب نمایید:"
+            ),
+            reply_markup=make_levels_keyboard(),
+            parse_mode=ParseMode.HTML
         )
         return
 
     if data == "show_albums_menu":
         await query.edit_message_text(
-            text="لطفاً آلبوم مورد نظر را انتخاب کنید:",
-            reply_markup=make_albums_keyboard()
+            text=(
+                "🎵 <b>آلبوم‌های استاد همایون شجریان</b>\n\n"
+                "لطفاً آلبوم مورد نظر خود را انتخاب نمایید:"
+            ),
+            reply_markup=make_albums_keyboard(),
+            parse_mode=ParseMode.HTML
         )
         return
 
     if data == "contact_us":
-        # اینجا آیدی تلگرام خودتان را قرار دهید
-        admin_id = "@cheraghii1" 
+        admin_url = "https://t.me/cheraghii1"
+        contact_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💬 گفتگوی مستقیم در تلگرام", url=admin_url)],
+            [InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")]
+        ])
         await query.edit_message_text(
-            text=f"📞 راه‌های ارتباطی با ما:\n\nبرای ارتباط مستقیم می‌توانید به آیدی زیر پیام دهید:\n{admin_id}\n\nیا نظرات خود را همینجا بنویسید.",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 بازگشت", callback_data="back_to_main")]])
+            text=(
+                "📩 <b>راه‌های ارتباط با ما</b>\n\n"
+                "برای ارسال انتقادات، پیشنهادات یا در میان گذاشتن نظرات خود درباره کانال و ربات شجره، "
+                "می‌توانید مستقیماً با مدیریت در ارتباط باشید:"
+            ),
+            reply_markup=contact_keyboard,
+            parse_mode=ParseMode.HTML
         )
         return
 
     if data == "search_guide":
         context.user_data['waiting_for_search'] = True
-        
+        cancel_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("❌ انصراف و بازگشت", callback_data="cancel_search")]
+        ])
         await query.edit_message_text(
-            text="🔍 **حالت جستجو فعال شد**\n\nحالا کلمه مورد نظر (نام آهنگ، شعر یا آلبوم) را تایپ کنید:",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("❌ لغو جستجو", callback_data="cancel_search")]])
+            text=(
+                "🔍 <b>حالت جستجوی اثر فعال شد</b>\n\n"
+                "لطفاً بخشی از <b>نام قطعه، شعر، تصنیف یا آلبوم</b> مورد نظر خود را تایپ و ارسال فرمایید:"
+            ),
+            reply_markup=cancel_keyboard,
+            parse_mode=ParseMode.HTML
         )
         return
 
@@ -180,16 +226,20 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             all_posts.extend(post_list)
         
         if not all_posts:
-            await context.bot.send_message(query.message.chat_id, text="هنوز هیچ آهنگی در آرشیو موجود نیست!")
+            await context.bot.send_message(query.message.chat_id, text="هنوز اثری در آرشیو ثبت نشده است.")
             return
 
         random_post = random.choice(all_posts)
-        await context.bot.send_message(query.message.chat_id, text="🎲 نیت کنید... فال شما آمد:")
+        await context.bot.send_message(
+            query.message.chat_id,
+            text="🪶 <i>نیت کنید و گوش دل بسپارید... فال شما:</i>",
+            parse_mode=ParseMode.HTML
+        )
         await send_post(query.message.chat_id, random_post, context)
         await asyncio.sleep(1)  
         await context.bot.send_message(
             query.message.chat_id,
-            text="بازگشت به منوی اصلی:",
+            text="🌿 برای شنیدن دیگر نغمه‌ها از منوی زیر استفاده کنید:",
             reply_markup=make_main_menu_keyboard()
         )
         return
@@ -197,26 +247,34 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     posts = context.bot_data.get("posts", {})
     level_posts = posts.get(data, []) 
 
-    if not level_posts:
-        display_name = data
+    level_names = {
+        "level1": "سطح ۱",
+        "level2": "سطح ۲",
+        "level3": "سطح ۳",
+        "level4": "سطح ۴",
+        "level5": "سطح ۵",
+    }
+    display_name = level_names.get(data)
+    if not display_name:
         for p_name, c_id in ALBUMS_DATA.items():
             if c_id == data:
-                display_name = p_name
+                display_name = f"آلبوم «{p_name}»"
                 break
-        
+    if not display_name:
+        display_name = data
+
+    if not level_posts:
         await context.bot.send_message(
             query.message.chat_id,
-            text=f"برای {display_name} پستی تعریف نشده است."
+            text=f"برای <b>{display_name}</b> اثری در آرشیو ثبت نشده است.",
+            parse_mode=ParseMode.HTML
         )
         return
 
-    display_name = data
-    for p_name, c_id in ALBUMS_DATA.items():
-        if c_id == data:
-            display_name = p_name
-            break
-            
-    await query.edit_message_text(text=f"در حال ارسال {len(level_posts)} پست از {display_name}...")
+    await query.edit_message_text(
+        text=f"⏳ <b>در حال ارسال {len(level_posts)} اثر از {display_name}...</b>\nلطفاً صبور باشید.",
+        parse_mode=ParseMode.HTML
+    )
 
     for i, p in enumerate(level_posts):
         await send_post(query.message.chat_id, p, context)
@@ -225,12 +283,20 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await asyncio.sleep(1.0)
 
-    await context.bot.send_message(query.message.chat_id, text="ارسال پست‌ها تمام شد.")
-    
+    completion_keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🗂 بازگشت به سطوح", callback_data="show_levels_menu"),
+            InlineKeyboardButton("🎵 بازگشت به آلبوم‌ها", callback_data="show_albums_menu")
+        ],
+        [
+            InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")
+        ]
+    ])
     await context.bot.send_message(
         query.message.chat_id,
-        text="چه کار دیگری انجام دهیم؟",
-        reply_markup=make_main_menu_keyboard()
+        text=f"✨ ارسال آثار <b>{display_name}</b> با موفقیت پایان یافت.\nبرای ادامه، بخش دلخواه خود را برگزینید:",
+        reply_markup=completion_keyboard,
+        parse_mode=ParseMode.HTML
     )
 
 async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -245,7 +311,10 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
     posts = context.bot_data.get("posts", {})
     found_posts = []
 
-    await update.message.reply_text(f"🔍 در حال جستجو برای: «{user_text}»...")
+    await update.message.reply_text(
+        f"🔍 در حال جستجو برای: «<b>{user_text.strip()}</b>»...",
+        parse_mode=ParseMode.HTML
+    )
 
     for category, post_list in posts.items():
         for post in post_list:
@@ -256,25 +325,43 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
                 found_posts.append(post)
 
     if not found_posts:
+        no_res_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 جستجوی مجدد", callback_data="search_guide")],
+            [InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")]
+        ])
         await update.message.reply_text(
-            f"❌ متاسفانه موردی یافت نشد.",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 بازگشت", callback_data="back_to_main")]])
+            f"❌ متاسفانه اثری مطابق با «<b>{user_text.strip()}</b>» یافت نشد.\nمی‌توانید کلمه دیگری را جستجو کنید.",
+            reply_markup=no_res_keyboard,
+            parse_mode=ParseMode.HTML
         )
     else:
-        await update.message.reply_text(f"✅ تعداد {len(found_posts)} مورد پیدا شد:")
+        total_count = len(found_posts)
+        if total_count > 5:
+            header_text = f"✅ تعداد <b>{total_count}</b> اثر یافت شد (نمایش ۵ اثر اول):"
+        else:
+            header_text = f"✅ تعداد <b>{total_count}</b> اثر یافت شد:"
+
+        await update.message.reply_text(header_text, parse_mode=ParseMode.HTML)
+
         for p in found_posts[:5]: 
             await send_post(update.message.chat_id, p, context)
             await asyncio.sleep(1.0)
         
+        search_finish_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 جستجوی دیگر", callback_data="search_guide")],
+            [InlineKeyboardButton("🔙 منوی اصلی", callback_data="back_to_main")]
+        ])
         await update.message.reply_text(
-            "پایان نتایج جستجو.",
-            reply_markup=make_main_menu_keyboard()
+            "✨ پایان نتایج جستجو.\nبرای ادامه، بخش دلخواه را انتخاب کنید:",
+            reply_markup=search_finish_keyboard
         )
 
     context.user_data['waiting_for_search'] = False
 
-
 def main():
+    if not BOT_TOKEN:
+        print("هشدار: متغیر محیطی BOT_TOKEN تنظیم نشده است.")
+
     posts = load_posts(POSTS_FILE)
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -282,13 +369,11 @@ def main():
     app.bot_data["posts"] = posts
 
     app.add_handler(CommandHandler("start", start_command))
-
     app.add_handler(CallbackQueryHandler(button_callback))
-
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_search_message))
 
     print(f"ربات {CHANNEL_NAME} با موفقیت اجرا شد...")
-    app.run_polling()
+    app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
     main()
