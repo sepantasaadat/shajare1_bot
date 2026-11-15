@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7GATRFSPP0P0973WSHKB05Z",
+  "session_id": "ba214e60-7d01-4233-b0ba-7fb6b7132dae",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-15T19:27:03.6105504Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "telegram_bot_shajare.py"
+  ],
+  "agent": "Antigravity",
+  "model": "gemini-3.8-flash-tiered",
+  "turn_id": "8a760b5c28a9",
+  "redaction": {
+    "replacements": 1,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 1,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
