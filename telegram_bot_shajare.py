@@ -6,6 +6,7 @@ import json
 import os
 import asyncio
 import random
+import html
 
 CHANNEL_NAME = "شجره"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -308,11 +309,12 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
         return
 
     query_text = user_text.strip().lower()
+    escaped_text = html.escape(user_text.strip())
     posts = context.bot_data.get("posts", {})
     found_posts = []
 
     await update.message.reply_text(
-        f"🔍 در حال جستجو برای: «<b>{user_text.strip()}</b>»...",
+        f"🔍 در حال جستجو برای: «<b>{escaped_text}</b>»...",
         parse_mode=ParseMode.HTML
     )
 
@@ -330,7 +332,7 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
             [InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")]
         ])
         await update.message.reply_text(
-            f"❌ متاسفانه اثری مطابق با «<b>{user_text.strip()}</b>» یافت نشد.\nمی‌توانید کلمه دیگری را جستجو کنید.",
+            f"❌ متاسفانه اثری مطابق با «<b>{escaped_text}</b>» یافت نشد.\nمی‌توانید کلمه دیگری را جستجو کنید.",
             reply_markup=no_res_keyboard,
             parse_mode=ParseMode.HTML
         )
