@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7G91G2ZZ5R26HBDGANG1P7A",
+  "session_id": "11989f4f-5851-48e4-bda7-aaff608fc614",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-15T18:55:46.7519675Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "requirements.txt"
+  ],
+  "agent": "Antigravity",
+  "model": "gemini-3.8-flash-tiered",
+  "turn_id": "9c028e35707b",
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
