@@ -3,7 +3,7 @@
   "checkpoint_id": "01M7GBG33D9W7J1YEHGGTAQ4K9",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "graphify-out/.graphify_build_state.json",
     "graphify-out/.graphify_labels.json.sig",
@@ -24,6 +24,12 @@
       "metadata": "/1/metadata.json",
       "transcript": "/1/full.jsonl",
       "content_hash": "/1/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/2/metadata.json",
+      "transcript": "/2/full.jsonl",
+      "content_hash": "/2/content_hash.txt",
       "prompt": ""
     }
   ],
