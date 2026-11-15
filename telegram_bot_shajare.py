@@ -144,7 +144,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     if context.user_data.get('is_forwarding'):
-        await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        try:
+            await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        except Exception:
+            pass
         return
 
     await query.answer()
@@ -277,16 +280,19 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if context.user_data.get('is_forwarding'):
-        await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        try:
+            await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        except Exception:
+            pass
         return
-
-    await query.edit_message_text(
-        text=f"⏳ <b>در حال ارسال {len(level_posts)} اثر از {display_name}...</b>\nلطفاً صبور باشید.",
-        parse_mode=ParseMode.HTML
-    )
 
     context.user_data['is_forwarding'] = True
     try:
+        await query.edit_message_text(
+            text=f"⏳ <b>در حال ارسال {len(level_posts)} اثر از {display_name}...</b>\nلطفاً صبور باشید.",
+            parse_mode=ParseMode.HTML
+        )
+
         for i, p in enumerate(level_posts):
             await send_post(query.message.chat_id, p, context)
             if (i + 1) % 20 == 0:
