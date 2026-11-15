@@ -143,6 +143,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if context.user_data.get('is_forwarding'):
+        await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        return
+
     await query.answer()
     data = query.data
     
@@ -272,17 +276,25 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    if context.user_data.get('is_forwarding'):
+        await query.answer("لطفاً تا پایان ارسال آثار قبلی صبور باشید.", show_alert=True)
+        return
+
     await query.edit_message_text(
         text=f"⏳ <b>در حال ارسال {len(level_posts)} اثر از {display_name}...</b>\nلطفاً صبور باشید.",
         parse_mode=ParseMode.HTML
     )
 
-    for i, p in enumerate(level_posts):
-        await send_post(query.message.chat_id, p, context)
-        if (i + 1) % 20 == 0:
-            await asyncio.sleep(3)  # longer pause every 20 messages
-        else:
-            await asyncio.sleep(1.0)
+    context.user_data['is_forwarding'] = True
+    try:
+        for i, p in enumerate(level_posts):
+            await send_post(query.message.chat_id, p, context)
+            if (i + 1) % 20 == 0:
+                await asyncio.sleep(3)  # longer pause every 20 messages
+            else:
+                await asyncio.sleep(1.0)
+    finally:
+        context.user_data['is_forwarding'] = False
 
     completion_keyboard = InlineKeyboardMarkup([
         [
