@@ -1,12 +1,20 @@
+import asyncio
+import html
+import json
+import logging
+import os
+import random
+
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackQueryHandler, MessageHandler, filters
-import json
-import os
-import asyncio
-import random
-import html
+
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger("shajare_bot")
 
 CHANNEL_NAME = "شجره"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -68,12 +76,16 @@ async def send_post(chat_id: int, post: dict, context: ContextTypes.DEFAULT_TYPE
             return  # Success - exit the retry loop
         except telegram.error.RetryAfter as e:
             wait_time = e.retry_after + 1
-            print(f"Rate limit hit! Waiting {wait_time} seconds...")
+            logger.warning("Rate limit hit! Waiting %s seconds...", wait_time)
             await asyncio.sleep(wait_time)
         except telegram.error.TimedOut:
             await asyncio.sleep(2 ** attempt)
         except Exception as e:
-            await context.bot.send_message(chat_id, text=f"خطا در ارسال پیام: {e}")
+            logger.error("Error forwarding post to chat %s: %s", chat_id, e, exc_info=True)
+            await context.bot.send_message(
+                chat_id,
+                text="متأسفانه در ارسال این اثر خطایی رخ داد. لطفاً لحظاتی دیگر تلاش فرمایید."
+            )
             return
 
 def make_main_menu_keyboard():
@@ -380,7 +392,8 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
 
 def main():
     if not BOT_TOKEN:
-        print("هشدار: متغیر محیطی BOT_TOKEN تنظیم نشده است.")
+        logger.critical("BOT_TOKEN environment variable is missing. Terminating.")
+        raise SystemExit("CRITICAL: BOT_TOKEN environment variable is not set. Exiting.")
 
     posts = load_posts(POSTS_FILE)
 
@@ -392,7 +405,7 @@ def main():
     app.add_handler(CallbackQueryHandler(button_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_search_message))
 
-    print(f"ربات {CHANNEL_NAME} با موفقیت اجرا شد...")
+    logger.info("ربات %s با موفقیت اجرا شد...", CHANNEL_NAME)
     app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
