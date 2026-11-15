@@ -18,9 +18,21 @@
     "semantic_hash": ""
   },
   "telegram_bot_shajare.py": {
-    "mtime": 1794264378.7744825,
-    "seen": 1794264426.519886,
-    "ast_hash": "7cbeba6c7e56302cebe7db03dcc647bf",
+    "mtime": 1794770751.0894876,
+    "seen": 1794771498.044739,
+    "ast_hash": "b741ee989218c7168d47182abc000753",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-security-remediation.md": {
+    "mtime": 1794768461.0753064,
+    "seen": 1794769264.4309545,
+    "ast_hash": "870be6bde0f0a635c9c42a0b3948f3ea",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1794768910.3298647,
+    "seen": 1794769264.4309573,
+    "ast_hash": "0797bc8ab76ff8e996527b242bbdac52",
     "semantic_hash": ""
   }
 }
