@@ -1,0 +1,25 @@
+[Unit]
+Description=Shajare Telegram Bot Service
+After=network.target
+
+[Service]
+Type=simple
+User=shajare
+Group=shajare
+WorkingDirectory=/opt/shajare1_bot
+EnvironmentFile=/etc/default/shajare_bot
+ExecStart=/opt/shajare1_bot/venv/bin/python /opt/shajare1_bot/telegram_bot_shajare.py
+Restart=always
+RestartSec=5
+
+# Systemd Security & Sandboxing
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ReadWritePaths=/opt/shajare1_bot
+
+[Install]
+WantedBy=multi-user.target
