@@ -12,14 +12,14 @@
   "model": "",
   "turn_id": "d3b1e2c44084",
   "redaction": {
-    "replacements": 44,
+    "replacements": 46,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
-      "credential_value": 19,
+      "credential_value": 20,
       "credentialed_uri": 0,
-      "entropy": 30,
+      "entropy": 31,
       "key_context": 0,
       "provider_token": 0,
       "shell_stdin": 0
