@@ -33,6 +33,13 @@ async def handle_fal_homayouni(update: Update, context: ContextTypes.DEFAULT_TYP
     chat_id = query.message.chat_id if query and query.message else update.effective_chat.id
     repo = context.bot_data.get("repo")
 
+    # If triggered from an existing message with buttons, remove old buttons to prevent duplicate clutter
+    if query and query.message:
+        try:
+            await query.edit_message_reply_markup(reply_markup=None)
+        except Exception:
+            pass
+
     if not repo:
         await context.bot.send_message(chat_id, text="متأسفانه آرشیو نغمات موقتاً در دسترس نیست.")
         return

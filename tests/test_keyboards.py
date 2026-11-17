@@ -49,5 +49,35 @@ class TestKeyboards(unittest.TestCase):
         self.assertIn("fale_homayouni", callbacks)
         self.assertIn("back_to_main", callbacks)
 
+    def test_bulk_forwarding_keyboard(self):
+        from bot.keyboards.menus import make_bulk_forwarding_keyboard
+        kb = make_bulk_forwarding_keyboard()
+        callbacks = [btn.callback_data for row in kb.inline_keyboard for btn in row if btn.callback_data]
+        self.assertIn("stop_bulk_forwarding", callbacks)
+
+    def test_search_results_keyboard(self):
+        from bot.keyboards.menus import make_search_results_keyboard
+        mock_results = [
+            {"message_id": 200 + i, "title_fa": f"اثر {i}", "album_name": "نسیم وصل"} for i in range(12)
+        ]
+        # Page 0 (5 items)
+        kb_page0 = make_search_results_keyboard(mock_results, page=0, page_size=5)
+        callbacks0 = [btn.callback_data for row in kb_page0.inline_keyboard for btn in row if btn.callback_data]
+        self.assertIn("play_200", callbacks0)
+        self.assertIn("play_204", callbacks0)
+        self.assertNotIn("play_205", callbacks0)
+        self.assertIn("bulk_search", callbacks0)
+        self.assertIn("search_page_1", callbacks0)
+        self.assertIn("search_guide", callbacks0)
+        self.assertIn("back_to_main", callbacks0)
+
+        # Page 2 (2 items: 10, 11)
+        kb_page2 = make_search_results_keyboard(mock_results, page=2, page_size=5)
+        callbacks2 = [btn.callback_data for row in kb_page2.inline_keyboard for btn in row if btn.callback_data]
+        self.assertIn("play_210", callbacks2)
+        self.assertIn("play_211", callbacks2)
+        self.assertIn("search_page_1", callbacks2)
+        self.assertNotIn("search_page_3", callbacks2)
+
 if __name__ == "__main__":
     unittest.main()

@@ -175,3 +175,73 @@ def make_completion_keyboard() -> InlineKeyboardMarkup:
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
+
+def make_bulk_forwarding_keyboard() -> InlineKeyboardMarkup:
+    keyboard = [
+        [InlineKeyboardButton("🛑 توقف ارسال", callback_data="stop_bulk_forwarding")]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+def make_search_results_keyboard(
+    tracks: List[Dict[str, Any]],
+    page: int = 0,
+    page_size: int = 5
+) -> InlineKeyboardMarkup:
+    """
+    Paginated interactive selector for search results.
+    Allows user to play a specific result, bulk-send all search results,
+    navigate pages, search again, or go back to main menu.
+    """
+    total_tracks = len(tracks)
+    total_pages = max(1, math.ceil(total_tracks / page_size))
+    page = max(0, min(page, total_pages - 1))
+
+    start_idx = page * page_size
+    end_idx = min(start_idx + page_size, total_tracks)
+    page_tracks = tracks[start_idx:end_idx]
+
+    keyboard = []
+
+    # Single track buttons
+    for t in page_tracks:
+        msg_id = t["message_id"]
+        title = t.get("title_fa") or f"نغمه شماره {msg_id}"
+        alb = t.get("album_name")
+        if alb:
+            label = f"▶️ {title} ({alb})"
+        else:
+            label = f"▶️ {title}"
+        if len(label) > 38:
+            label = label[:35] + "..."
+        keyboard.append([
+            InlineKeyboardButton(label, callback_data=f"play_{msg_id}")
+        ])
+
+    # Bulk send button for search results
+    keyboard.append([
+        InlineKeyboardButton("📦 ارسال یکجای تمام نتایج این جستجو", callback_data="bulk_search")
+    ])
+
+    # Pagination navigation
+    if total_pages > 1:
+        nav_row = []
+        if page > 0:
+            nav_row.append(
+                InlineKeyboardButton("◀️ قبلی", callback_data=f"search_page_{page - 1}")
+            )
+        nav_row.append(
+            InlineKeyboardButton(f"صفحه {page + 1} از {total_pages}", callback_data="noop")
+        )
+        if page < total_pages - 1:
+            nav_row.append(
+                InlineKeyboardButton("بعدی ▶️", callback_data=f"search_page_{page + 1}")
+            )
+        keyboard.append(nav_row)
+
+    # Search options
+    keyboard.append([
+        InlineKeyboardButton("🔍 جستجوی دیگر", callback_data="search_guide"),
+        InlineKeyboardButton("🔙 منوی اصلی", callback_data="back_to_main")
+    ])
+
+    return InlineKeyboardMarkup(keyboard)

@@ -2,34 +2,50 @@ import html
 import asyncio
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
-from telegram.constants import ParseMode
+from telegram.constants import ParseMode, ChatType
 from telegram.ext import ContextTypes
 
-from bot.keyboards.menus import make_main_menu_keyboard
+from bot.keyboards.menus import make_search_results_keyboard, make_main_menu_keyboard
 from bot.services.forwarder import send_track
 
 logger = logging.getLogger(__name__)
 
 async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not context.user_data.get('waiting_for_search'):
+    if not update.message or not update.message.text:
         return
 
-    user_text = update.message.text
+    is_waiting = context.user_data.get('waiting_for_search', False)
+    is_private = update.effective_chat and update.effective_chat.type == ChatType.PRIVATE
+
+    # Process search if explicitly requested or if sent in private chat
+    if not (is_waiting or is_private):
+        return
+
+    # Clean up previous search prompt button if one was recorded
+    prompt_msg_id = context.user_data.pop('search_prompt_msg_id', None)
+    if prompt_msg_id and update.effective_chat:
+        try:
+            await context.bot.edit_message_reply_markup(
+                chat_id=update.effective_chat.id,
+                message_id=prompt_msg_id,
+                reply_markup=None
+            )
+        except Exception:
+            pass
+
+    user_text = update.message.text.strip()
     if not user_text:
         return
 
-    escaped_text = html.escape(user_text.strip())
+    escaped_text = html.escape(user_text)
     repo = context.bot_data.get("repo")
     if not repo:
         await update.message.reply_text("پایگاه داده موقتاً در دسترس نیست.")
         return
 
-    await update.message.reply_text(
-        f"🔍 در حال جستجو برای: «<b>{escaped_text}</b>»...",
-        parse_mode=ParseMode.HTML
-    )
-
-    found_tracks = repo.search_tracks(user_text.strip(), limit=10)
+    found_tracks = repo.search_tracks(user_text, limit=30)
+    context.user_data['last_search_results'] = found_tracks
+    context.user_data['last_search_query'] = user_text
 
     if not found_tracks:
         no_res_keyboard = InlineKeyboardMarkup([
@@ -37,32 +53,19 @@ async def handle_search_message(update: Update, context: ContextTypes.DEFAULT_TY
             [InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="back_to_main")]
         ])
         await update.message.reply_text(
-            f"❌ متاسفانه اثری مطابق با «<b>{escaped_text}</b>» یافت نشد.\nمی‌توانید نام قطعه، گوشه یا آلبوم دیگری را جستجو فرمایید.",
+            f"❌ متاسفانه اثری مطابق با «<b>{escaped_text}</b>» یافت نشد.\nمی‌توانید نام قطعه، گوشه یا آلبوم دیگری را جستجو فرمایید:",
             reply_markup=no_res_keyboard,
             parse_mode=ParseMode.HTML
         )
     else:
         total_count = len(found_tracks)
-        display_count = min(total_count, 5)
-        if total_count > 5:
-            header_text = f"✅ تعداد <b>{total_count}</b> اثر یافت شد (نمایش ۵ اثر اول):"
-        else:
-            header_text = f"✅ تعداد <b>{total_count}</b> اثر یافت شد:"
-
-        await update.message.reply_text(header_text, parse_mode=ParseMode.HTML)
-
-        for track in found_tracks[:display_count]:
-            await send_track(update.message.chat_id, track, context)
-            await asyncio.sleep(1.0)
-
-        search_finish_keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔍 جستجوی دیگر", callback_data="search_guide")],
-            [InlineKeyboardButton("🔙 منوی اصلی", callback_data="back_to_main")]
-        ])
-        await update.message.reply_text(
-            "✨ پایان نتایج جستجو.\nبرای ادامه، بخش دلخواه را انتخاب کنید:",
-            reply_markup=search_finish_keyboard
+        results_kb = make_search_results_keyboard(found_tracks, page=0, page_size=5)
+        text = (
+            f"🔍 <b>نتایج جستجو برای:</b> «<b>{escaped_text}</b>»\n"
+            f"<i>مجموعاً {total_count} نغمه در آرشیو یافت شد.</i>\n\n"
+            "برای شنیدن هر قطعه دکمه آن را لمس کنید یا جهت دریافت همه، دکمه «ارسال یکجا» را برگزینید:"
         )
+        await update.message.reply_text(text, reply_markup=results_kb, parse_mode=ParseMode.HTML)
 
     context.user_data['waiting_for_search'] = False
 
@@ -85,7 +88,6 @@ async def handle_inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE
     if query_text:
         tracks = repo.search_tracks(query_text, limit=15)
     else:
-        # Show sample tracks if query is empty
         tracks = repo.get_all_tracks()[:10]
 
     results = []

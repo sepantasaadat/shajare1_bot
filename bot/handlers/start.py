@@ -34,8 +34,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Check for deep-linking arguments (e.g. /start track_726)
     track_id = extract_deep_link_track_id(context.args)
-    if track_id and repo:
-        track = repo.get_track_by_message_id(track_id)
+    if track_id:
+        track = repo.get_track_by_message_id(track_id) if repo else None
         if track:
             title = track.get("title_fa") or f"قطعه شماره {track_id}"
             alb_name = track.get("album_name") or "آرشیو"
@@ -56,6 +56,12 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=InlineKeyboardMarkup(keyboard)
             )
             return
+        else:
+            await update.message.reply_text(
+                "⚠️ <b>قطعه مورد نظر در آرشیو یافت نشد یا ممکن است جابه‌جا شده باشد.</b>\n"
+                "می‌توانید نام اثر را جستجو نمایید یا از منوی زیر استفاده فرمایید:",
+                parse_mode=ParseMode.HTML
+            )
 
     welcome_text = (
         f"🌿 <b>به گنجینه صوتی «{channel_name}» خوش آمدید</b> 🌿\n"
