@@ -1,0 +1,572 @@
+check my python based telegram bot is there any errors and wrong thing in the codes?
+
+---
+
+ok tell me how could i fix Rate limit risk on bulk forwards
+
+---
+
+# Project Context: Shajare Telegram Bot (shajare1_bot)
+
+## 1. Server & Environment Architecture
+- **OS & Host:** Ubuntu Linux VPS (`root@ubuntu-London-0`)
+- **Project Directory:** `/root/shajare1_bot`
+- **GitHub Repository:** `https://github.com/sepantasaadat/shajare1_bot.git`
+- **Isolation Constraint (CRITICAL):** This VPS also hosts an active website and another Telegram bot for a Psychological Clinic. All operations, packages, and configurations for `shajare1_bot` MUST remain strictly isolated within its own directory and virtual environment (`/root/shajare1_bot/venv`) to prevent any port, package, or process conflicts.
+
+## 2. File Structure & Tech Stack
+- **Main Bot Script:** `/root/shajare1_bot/telegram_bot_shajare.py`
+- **Database/Data File:** `/root/shajare1_bot/posts.json`
+- **Virtual Environment:** `/root/shajare1_bot/venv`
+- **Python Dependencies:** 
+  - External: `python-telegram-bot` (v20+ asynchronous architecture using `ApplicationBuilder`, `ContextTypes`, `CommandHandler`, `CallbackQueryHandler`, `MessageHandler`, `filters`, `InlineKeyboardButton`, `InlineKeyboardMarkup`, `Update`).
+  - Built-in modules used: `json`, `os`, `asyncio`, `random`.
+  - Note: No `requirements.txt` currently exists in the repository.
+
+## 3. Security & Environment Variables
+- The Telegram Bot Token is **never** hardcoded in `telegram_bot_shajare.py` to keep the public GitHub repository secure.
+- In Python, the token is retrieved via:
+  `BOT_TOKEN = REDACTED
+- The actual token value is injected via the `systemd` service environment configuration on the server.
+
+## 4. Production Deployment (Systemd Service)
+- **Service Name:** `shajare_bot.service`
+- **Service Path:** `/etc/systemd/system/shajare_bot.service`
+- **Current Status:** Enabled on boot and `active (running)`.
+- **Service Configuration:**
+  [Unit]
+  Description=Shajare Telegram Bot Service
+  After=network.target
+
+  [Service]
+  Type=simple
+  User=root
+  WorkingDirectory=/root/shajare1_bot
+  Environment="BOT_TOKEN=REDACTED_ON_SERVER"
+  ExecStart=/root/shajare1_bot/venv/bin/python /root/shajare1_bot/telegram_bot_shajare.py
+  Restart=always
+  RestartSec=5
+
+  [Install]
+  WantedBy=multi-user.target
+
+## 5. Development & Maintenance Workflow Rules
+1. **Step-by-Step Preference:** Always guide me step-by-step and tell me exactly which lines/sections of the code to modify rather than sending full rewritten scripts all at once.
+2. **Adding Packages:** Always activate the virtual environment first (`source /root/shajare1_bot/venv/bin/activate`) before installing any new pip packages.
+3. **Applying Code Changes on Server:** After modifying `telegram_bot_shajare.py` or pulling updates from GitHub (`git pull`), restart the service using:
+   `sudo systemctl restart shajare_bot`
+4. **Monitoring Logs:** Check live logs and errors using:
+   `sudo journalctl -u shajare_bot -f -n 50`
+
+---
+
+Option B
+
+---
+
+could you ask me what you want and then yourself deploy it on my vps
+
+---
+
+ok i done it successfully
+
+---
+
+please install Graphify from https://github.com/Graphify-Labs/graphify and make it work for this project and every changes that will be happen in the future
+
+---
+
+please install Graphify from https://github.com/Graphify-Labs/graphify and make it work for this project and every changes that will be happen in the future
+
+---
+
+ok i did it right
+
+---
+
+ok every time when you wnat fix someyhing or part of mw projectt use this project knowledge graph of this project to navigate easily
+
+---
+
+i want you to connect this project with  my entire.com account , i already have this page that connected via github but it doeasnt connected via my local clone https://entire.com/gh/sepantasaadat/shajare1_bot
+
+---
+
+ok i done it and it is connected and synced
+
+---
+
+Take a look at the Telegram bot's interface; do you think it could be improved in terms of its visual design, user-friendliness, or the phrasing used within the bot?
+
+---
+
+do all changes carefully and completly without any mistake after changing all changes that you said check all codes line by line to do not have any mistake after that push it to the github and then tell me what should i do  on vps
+
+---
+
+ok i done it correctly
+
+---
+
+/authorized-security-audit Perform an initial, read-only security audit of the currently open Shajare Bot project using the `authorized-security-audit` skill.
+
+### Scope
+
+Audit only the local source code and configuration files of this project.
+
+### Areas to inspect
+
+1. Python source code and application architecture.
+2. Telegram bot authentication and authorization.
+3. Admin privileges and access-control mechanisms.
+4. Hardcoded credentials, API tokens, bot tokens, and secrets.
+5. Environment-variable and configuration management.
+6. Database security and data handling.
+7. Input validation and potentially unsafe file operations.
+8. Command execution and injection risks.
+9. Dependency security and outdated packages.
+10. Logging, error handling, and sensitive-data exposure.
+11. Deployment configuration, systemd services, and VPS security.
+12. Git repository hygiene, including accidentally committed secrets.
+
+### Restrictions
+
+- Do not modify, delete, or create project files.
+- Do not install packages or additional security tools.
+- Do not execute exploits or destructive commands.
+- Do not perform external network scans.
+- Do not access third-party systems.
+- Do not reveal actual secret values in the report. Redact them.
+- Do not treat suspected vulnerabilities as confirmed findings.
+
+### HackingTool integration
+
+First determine whether HackingTool is relevant to this audit.
+
+For this initial static audit, do not launch HackingTool modules unnecessarily. Verify its availability through WSL only if needed.
+
+### Deliverable
+
+Generate a professional security audit report containing:
+
+- Executive summary.
+- Security findings ranked Critical, High, Medium, Low, and Informational.
+- Affected file paths and line numbers.
+- Evidence supporting each finding.
+- Potential impact and exploitability.
+- Recommended remediation.
+- Verification steps.
+- Checks that could not be performed.
+
+At the end, explicitly state whether the `authorized-security-audit` skill was invoked and whether WSL/HackingTool integration was verified.
+
+---
+
+@[plugin:superpowers] fix this problems and then push it to git hub Analyzed SKILL.md:L1-95
+Ran query knowledge graph for security elements · Exited with code 1
+Ran query graph for main bot file
+Ran check installed WSL distros
+Ran check hackingtool in WSL
+Ran list git tracked files
+Analyzed settings.json:L1-9
+Analyzed hooks.json:L1-34
+Analyzed .gitignore:L1-7
+Analyzed .gitignore:L1-5
+Ran view git commit history
+Ran check commit 16c7648 diff
+Ran check token in 5ed72f8
+Ran check token in 20459d2
+Ran check where token appears in git history
+Ran check installed packages in venv2
+Ran list all root items including hidden
+Ran check git branches and tags
+Ran check git stash list
+
+# 🛡️ Authorized Security Audit Report: Shajare Telegram Bot (`shajare1_bot`)
+
+**Date:** November 15, 2026  
+**Audit Scope:** Local source code, repository Git history, dependency manifests, and systemd deployment configurations for `/root/shajare1_bot`.  
+**Audit Methodology:** Static Application Security Testing (SAST), Configuration & Secret Review, Architecture & Threat Modeling.  
+**Skill Invocation:** `authorized-security-audit` (executed in read-only defensive mode).
+
+---
+
+## 1. Executive Summary
+
+An initial, read-only static security audit of the **Shajare Telegram Bot** project was conducted. The application is an asynchronous Telegram bot built with `python-telegram-bot` (v20+), utilizing long polling to interact with Telegram's API and serving content from a local JSON dataset (`posts.json`).
+
+The audit identified **1 Critical**, **1 High**, **2 Medium**, **2 Low**, and **2 Informational** security findings:
+- **Critical Risk:** Historical Git commits in the repository contain hardcoded production Telegram Bot tokens. If these tokens have not been revoked on Telegram's @BotFather, an external attacker with access to the Git repository can hijack the bot.
+- **High Risk:** The production `systemd` service runs the Python process under the `root` superuser account (`User=root`). On a shared VPS hosting other independent services (including a Psychological Clinic bot and web services), a compromise of this bot process provides an attacker complete root control over the host.
+- **Medium Risks:** Unsanitized user inputs in search mode lead to Telegram HTML entity parsing crashes (Denial of Service), and there is an absence of per-user concurrency throttling during bulk message forwarding.
+
+---
+
+## 2. Findings Summary Table
+
+| ID | Finding Title | Severity | Component / Location | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **SEC-01** | Exposed Telegram Bot Tokens in Git Commit History | **CRITICAL** | Git History (`20459d2`, `48a105b`) | Confirmed |
+| **SEC-02** | Systemd Service Configured to Execute as Superuser (`root`) | **HIGH** | `/etc/systemd/system/shajare_bot.service` | Confirmed |
+| **SEC-03** | Unescaped User Input in HTML Messages (Entity Parsing DoS) | **MEDIUM** | [`telegram_bot_shajare.py:312, 335`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L311-L338) | Confirmed |
+| **SEC-04** | Missing Per-User Rate Limiting & Concurrency Controls | **MEDIUM** | [`telegram_bot_shajare.py:253-285`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L253-L285) | Confirmed |
+| **SEC-05** | Raw Python Exception Details Exposed to Chat Users | **LOW** | [`telegram_bot_shajare.py:73`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L72-L75) | Confirmed |
+| **SEC-06** | Absence of Pinned Dependency Manifest (`requirements.txt`) | **LOW** | Project Root | Confirmed |
+| **SEC-07** | Non-Terminating Warning on Missing `BOT_TOKEN` | **INFORMATIONAL** | [`telegram_bot_shajare.py:362-366`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L362-L366) | Confirmed |
+| **SEC-08** | Missing Structured Logging Architecture | **INFORMATIONAL** | [`telegram_bot_shajare.py:1-377`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L1-L377) | Confirmed |
+
+---
+
+## 3. Detailed Security Findings
+
+### SEC-01: Exposed Telegram Bot Tokens in Git Commit History
+- **Severity:** **CRITICAL**
+- **Affected Location:** Git History commits:
+  - Commit `20459d2` (`telegram_bot_shajare.py:8`)
+  - Commit `48a105b` (`telegram_bot_shajare.py:8`)
+  - Commit `5ed72f8` (`telegram_bot_shajare.py:8`)
+- **Evidence:**
+  Inspection of the repository's commit logs reveals plain-text Telegram Bot API tokens committed before the code was migrated to environment variables:
+  - *Commit `20459d2`:* `BOT_TOKEN = "REDACTED"`
+  - *Commit `48a105b`:* `BOT_TOKEN = "REDACTED"`
+  *(Exact secret characters redacted in accordance with audit guidelines).*
+- **Potential Impact & Exploitability:**
+  **High Exploitability.** Anyone with read access to the GitHub repository can clone the commit history and extract the tokens. A valid Telegram Bot token gives an attacker full programmatic control over the bot via Telegram Bot API:
+  - Reading incoming messages and private user communications.
+  - Impersonating the bot and broadcasting malicious links/phishing to users.
+  - Setting up webhooks to exfiltrate interactions to external servers.
+- **Recommended Remediation:**
+  1. **Immediate Revocation:** Open [@BotFather](https://t.me/BotFather) on Telegram, execute `/revoke`, and select the affected bot (`8549850754`) to generate a new, uncompromised token immediately.
+  2. **Update Server Config:** Insert the new token into the server's environment configuration.
+  3. **Scrub Git History:** Use `git-filter-repo` or BFG Repo-Cleaner to permanently purge these commits from the repository history before making the repository public or sharing it.
+- **Verification Steps:**
+  Run `git log -p -S "AAHpl"` and verify that the token diffs no longer appear once purged.
+
+---
+
+### SEC-02: Systemd Service Configured to Execute as Superuser (`root`)
+- **Severity:** **HIGH**
+- **Affected Location:** `/etc/systemd/system/shajare_bot.service` (Server Configuration)
+- **Evidence:**
+  ```ini
+  [Service]
+  Type=simple
+  User=root
+  WorkingDirectory=/root/shajare1_bot
+  ExecStart=/root/shajare1_bot/venv/bin/python /root/shajare1_bot/telegram_bot_shajare.py
+  ```
+- **Potential Impact & Exploitability:**
+  Violates the **Principle of Least Privilege (PoLP)**. The bot process runs with unrestricted operating system permissions on a VPS that simultaneously hosts a Psychological Clinic bot and an active website. 
+  If any vulnerability (e.g. arbitrary file write, unpinned dependency exploit in `httpx` or parser dependencies) is discovered or introduced, an attacker inherits full `root` capabilities, compromising all adjacent databases, clinic records, and web server configurations.
+- **Recommended Remediation:**
+  1. Create a dedicated unprivileged system account on Ubuntu:
+     ```bash
+     sudo useradd -r -s /bin/false -d /opt/shajare1_bot shajare
+     ```
+  2. Relocate the repository from `/root/shajare1_bot` to `/opt/shajare1_bot` and grant ownership to `shajare:shajare`:
+     ```bash
+     sudo chown -R shajare:shajare /opt/shajare1_bot
+     ```
+  3. Modify the systemd unit file to execute as `User=shajare` and add systemd isolation flags:
+     ```ini
+     [Service]
+     User=shajare
+     Group=shajare
+     ProtectSystem=strict
+     ProtectHome=true
+     NoNewPrivileges=true
+     PrivateTmp=true
+     ```
+- **Verification Steps:**
+  Run `ps -ef | grep telegram_bot_shajare.py` on the VPS to confirm the process owner is `shajare`, not `root`.
+
+---
+
+### SEC-03: Unescaped User Input in HTML Messages (Entity Parsing Denial of Service)
+- **Severity:** **MEDIUM**
+- **Affected Location:** [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L311-L338) (Lines 311–314, 333–338)
+- **Evidence:**
+  ```python
+  # Line 311-314
+  await update.message.reply_text(
+      f"🔍 در حال جستجو برای: «<b>{user_text.strip()}</b>»...",
+      parse_mode=ParseMode.HTML
+  )
+
+  # Line 333-338
+  await update.message.reply_text(
+      f"❌ متاسفانه اثری مطابق با «<b>{user_text.strip()}</b>» یافت نشد.\nمیتوانید کلمه دیگری را جستجو کنید.",
+      reply_markup=no_res_keyboard,
+      parse_mode=ParseMode.HTML
+  )
+  ```
+- **Potential Impact & Exploitability:**
+  When `parse_mode=ParseMode.HTML` is specified, Telegram expects valid XML/HTML entities. If a user enters `<test>`, `a & b`, or unclosed tags like `<b`, Telegram's API rejects the call with:
+  `telegram.error.BadRequest: Can't parse entities: tag '...' is not closed`
+  Because this exception is not caught, the search handler crashes, causing a persistent Denial of Service (DoS) for any query containing `<`, `>`, or `&`.
+- **Recommended Remediation:**
+  Import Python's built-in `html` library and escape the raw user text:
+  ```python
+  import html
+
+  escaped_query = html.escape(user_text.strip())
+  await update.message.reply_text(
+      f"🔍 در حال جستجو برای: «<b>{escaped_query}</b>»...",
+      parse_mode=ParseMode.HTML
+  )
+  ```
+- **Verification Steps:**
+  Send `<hello>` or `شجره & همایون` in search mode. The bot will escape the characters (`&lt;hello&gt;`) and process the search without raising API errors.
+
+---
+
+### SEC-04: Missing Per-User Rate Limiting & Concurrency Controls
+- **Severity:** **MEDIUM**
+- **Affected Location:** [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L253-L285) (Lines 253–285)
+- **Evidence:**
+  When a user taps a level button (such as `level1` containing 60 tracks), the bot enters a sequential forwarding loop:
+  ```python
+  for i, p in enumerate(level_posts):
+      await send_post(query.message.chat_id, p, context)
+      if (i + 1) % 20 == 0:
+          await asyncio.sleep(3)
+      else:
+          await asyncio.sleep(1.0)
+  ```
+- **Potential Impact & Exploitability:**
+  There is no concurrency lock or cooldown per user. A malicious or impatient user can spam the `level1` or `level2` inline buttons 10 times consecutively. This spawns 10 parallel asynchronous forwarding tasks to the same chat, sending hundreds of requests, saturating the bot's event loop, and exhausting Telegram's global bot rate limit for all other users.
+- **Recommended Remediation:**
+  Add a state lock in `context.user_data`:
+  ```python
+  if context.user_data.get('is_forwarding'):
+      await query.answer("لطفاً تا پایان ارسال قطعات قبلی صبور باشید.", show_alert=True)
+      return
+
+  context.user_data['is_forwarding'] = True
+  try:
+      # execute forwarding loop
+  finally:
+      context.user_data['is_forwarding'] = False
+  ```
+- **Verification Steps:**
+  Trigger multiple rapid button presses; verify that subsequent presses are throttled and answered with an alert instead of launching parallel dispatch loops.
+
+---
+
+### SEC-05: Raw Python Exception Details Exposed to Chat Users
+- **Severity:** **LOW**
+- **Affected Location:** [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L72-L75) (Lines 72–75)
+- **Evidence:**
+  ```python
+  except Exception as e:
+      await context.bot.send_message(chat_id, text=f"خطا در ارسال پیام: {e}")
+      return
+  ```
+- **Potential Impact & Exploitability:**
+  If an internal failure occurs (network timeout, invalid chat ID, or Telegram error), the raw Python exception string `str(e)` is rendered directly to end users. This can leak internal paths, connection states, or system metadata (CWE-209).
+- **Recommended Remediation:**
+  Log the full exception internally, and return a standardized Persian error message to the user:
+  ```python
+  except Exception as e:
+      logging.error("Failed to forward post to %s: %s", chat_id, e, exc_info=True)
+      await context.bot.send_message(
+          chat_id, 
+          text="متأسفانه در ارسال این اثر خطایی رخ داد. لطفاً لحظاتی بعد مجدداً تلاش کنید."
+      )
+      return
+  ```
+- **Verification Steps:**
+  Simulate an invalid message forward and check that users receive the sanitized message while the stack trace is written to server logs.
+
+---
+
+### SEC-06: Absence of Pinned Dependency Manifest (`requirements.txt`)
+- **Severity:** **LOW**
+- **Affected Location:** Repository Root
+- **Evidence:**
+  No `requirements.txt`, `pyproject.toml`, or lockfile exists in the Git repository.
+- **Potential Impact:**
+  Deployments on the VPS install packages ad-hoc without version locks. Automated vulnerability alerting tools (e.g., GitHub Dependabot) cannot track installed packages for known CVEs. Future installations may accidentally install breaking or insecure upstream releases.
+- **Recommended Remediation:**
+  Create a frozen `requirements.txt` containing tested versions:
+  ```text
+  python-telegram-bot==22.5
+  httpx==0.28.1
+  httpcore==1.0.9
+  anyio==4.11.0
+  certifi==2025.11.12
+  ```
+- **Verification Steps:**
+  Run `pip install -r requirements.txt --dry-run` in a clean environment to ensure deterministic builds.
+
+---
+
+### SEC-07: Non-Terminating Warning on Missing `BOT_TOKEN`
+- **Severity:** **INFORMATIONAL**
+- **Affected Location:** [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L362-L366) (Lines 362–366)
+- **Evidence:**
+  ```python
+  def main():
+      if not BOT_TOKEN:
+          print("هشدار: متغیر محیطی BOT_TOKEN تنظیم نشده است.")
+
+      posts = load_posts(POSTS_FILE)
+      app = ApplicationBuilder().token(BOT_TOKEN).build()
+  ```
+- **Impact:**
+  When `BOT_TOKEN` is unset or empty, the script prints a warning but continues execution until `ApplicationBuilder().token(None)` raises an unhandled `telegram.error.InvalidToken`.
+- **Recommended Remediation:**
+  Fail fast and terminate startup immediately:
+  ```python
+  if not BOT_TOKEN:
+      raise SystemExit("خطای بحرانی: متغیر محیطی BOT_TOKEN تنظیم نشده است.")
+  ```
+
+---
+
+### SEC-08: Missing Structured Logging Architecture
+- **Severity:** **INFORMATIONAL**
+- **Affected Location:** [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py#L1-L377)
+- **Evidence:**
+  The code uses `print()` statements for diagnostic output rather than standard `logging`.
+- **Impact:**
+  `systemd-journald` captures raw stdout without severity levels (INFO, WARN, ERROR), standardized timestamps, or module names, complicating security incident response and audit trails.
+- **Recommended Remediation:**
+  Initialize standard Python logging at module load:
+  ```python
+  import logging
+
+  logging.basicConfig(
+      format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+      level=logging.INFO
+  )
+  logger = logging.getLogger("shajare_bot")
+  ```
+
+---
+
+## 4. Checks Performed vs. Checks Not Performed
+
+### Checks Performed (In Scope)
+- Comprehensive static code review of [`telegram_bot_shajare.py`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/telegram_bot_shajare.py).
+- Review of [`posts.json`](file:///c:/Users/PC%20Ishragh/Desktop/shajare1_bot/posts.json) data integrity and structure.
+- Full Git history audit (`git log -p`) for committed secrets, tokens, and author metadata.
+- Configuration audit of systemd service parameters, user permissions, and deployment boundaries.
+- Input validation and entity formatting audit across all user handlers.
+- Knowledge graph inspection (`graphify`) for component relationships and traversal flows.
+- Evaluation of local virtual environment package manifests.
+
+### Checks Not Performed (Out of Scope / Restricted)
+- **Active network vulnerability scans:** No port scans, HTTP fuzzing, or external probing against Telegram's Bot API or VPS IP addresses were performed (strictly adhering to read-only constraints).
+- **Destructive exploits:** No live payload injection was executed against running services.
+- **Third-party system testing:** No penetration testing of Telegram infrastructure or GitHub servers.
+- **Host filesystem audit of VPS:** Remote VPS file permissions (`/etc/systemd/system/shajare_bot.service`) were audited via provided configuration metadata, not live root SSH inspection.
+
+---
+
+## 5. Mandatory Skill & Tool Verification Statement
+
+1. **Skill Invoked:** The `authorized-security-audit` skill was **explicitly invoked and followed** for this assessment, adhering to the mandatory authorization boundaries, non-destructive static review protocol, and secret redaction rules.
+2. **WSL / HackingTool Integration Verification:**
+   - WSL availability was checked: An active `Ubuntu-24.04` distribution was detected via `wsl.exe --list --quiet`.
+   - `hackingtool` availability was verified inside WSL at path `/home/sepanta/.local/bin/hackingtool`.
+   - **Relevance Determination:** In accordance with Phase 3 of the `authorized-security-audit` skill and the user's explicit scope restrictions (*"Audit only the local source code and configuration files... do not launch HackingTool modules unnecessarily"*), HackingTool's active offensive modules were **not launched**, as this assessment is a local, read-only static security audit that does not require offensive penetration testing tools.
+
+---
+
+@[plugin:superpowers] subagent driven
+
+---
+
+its ok , i did it
+
+---
+
+Act as a Principal Software Architect, Product Strategist, and Senior Full-Stack Developer. 
+
+Your task is to perform a deep, comprehensive analysis of my entire codebase in this workspace and generate high-impact, actionable, and technically feasible ideas to elevate this project.
+
+### Phase 1: Deep Codebase Audit (Do not skip)
+Before proposing any ideas, thoroughly inspect the project files, directory structure, dependencies (`requirements.txt`, `package.json`, etc.), database schemas, API endpoints, and core logic to understand:
+1. **Core Purpose & Domain:** What problem this project currently solves and who the end-users are.
+2. **Tech Stack & Architecture:** Current frameworks, libraries, design patterns, and infrastructure setup.
+3. **Current Limitations & Bottlenecks:** Technical debt, missing error handling, scalability bottlenecks, security gaps, or UX friction points evident in the code.
+
+### Phase 2: Actionable Ideation & Feature Proposals
+Based strictly on the actual architecture and context of my project (avoid generic advice), propose **5 to 7 concrete, high-value ideas** categorized into:
+1. **Quick Wins (High Impact, Low Effort):** Improvements or micro-features that can be implemented immediately using the existing stack.
+2. **Core Feature Expansions:** New functional modules, automation workflows, or user-facing capabilities that naturally extend what the codebase already does.
+3. **Architectural, Performance & Security Upgrades:** Refactoring opportunities, caching, async processing, or structural improvements tailored to my current implementation.
+
+### Output Format for Each Idea
+For every single proposal, provide:
+- **Title & Category**
+- **The "Why" (Codebase Context):** Reference specific files, functions, or patterns in my project that justify why this feature makes sense now.
+- **Technical Implementation Plan:** Step-by-step roadmap of what files need to be created or modified, and which libraries/tools from my stack (or lightweight additions) should be used.
+- **Estimated Complexity & Impact:** (e.g., Low/Medium/High)
+
+Start by briefly summarizing your understanding of my project's current architecture in 3-4 bullet points to confirm you have scanned the workspace accurately, then present your structured proposals.
+
+---
+
+@[plugin:superpowers] You are executing an end-to-end architectural refactoring and feature expansion of the **Shajare Telegram Bot** (`telegram_bot_shajare.py` and `posts.json`) based on the 3-Phase Roadmap we just established.
+
+### Strict Engineering & Execution Rules
+1. **Zero Regression:** Preserve all existing core behaviors, including `python-telegram-bot` (v22.5+) async patterns, exponential backoff for `RetryAfter`, per-user concurrency locks (`is_forwarding`), HTML entity escaping, and compatibility with `shajare_bot.service`.
+2. **Step-by-Step Execution:** Execute this plan sequentially in logical milestones. Do not skip steps or leave `TODO` placeholders. Every file must contain complete, production-ready code.
+3. **Database & Backward Compatibility:** Keep `posts.json` intact as a read-only backup source while migrating data into a clean SQLite database (`shajare.db`) with FTS5 enabled.
+
+---
+
+### Execution Plan
+
+#### Milestone 1: Modular Architecture & Data Layer Migration (Proposals 6 & 7)
+1. **Restructure the project** into a clean Python package while keeping a root entry point (or updating `shajare_bot.service` instructions cleanly) so existing deployment commands don't break:
+   ```text
+   shajare1_bot/
+   ├── bot/
+   │   ├── __init__.py
+   │   ├── config.py             # Env vars (BOT_TOKEN, ADMIN_USER_IDS), DB paths, constants
+   │   ├── database/
+   │   │   ├── __init__.py
+   │   │   ├── db.py             # SQLite connection, schema init, FTS5 virtual table & triggers
+   │   │   └── repository.py     # Deduplicated queries, album/level fetches, random Fal query
+   │   ├── keyboards/
+   │   │   ├── __init__.py
+   │   │   └── menus.py          # Main menu, paginated tracklists, Fal re-roll buttons
+   │   ├── handlers/
+   │   │   ├── __init__.py
+   │   │   ├── start.py          # /start & deep-link handling (?start=track_<msg_id>)
+   │   │   ├── navigation.py     # Album/level tracklist views, single-track & bulk delivery
+   │   │   ├── search.py         # Private chat search & InlineQueryHandler
+   │   │   ├── fal.py            # Curated deduplicated "فال همایونی" with re-roll
+   │   │   └── admin.py          # @admin_only protected /reload and /stats commands
+   │   ├── services/
+   │   │   ├── __init__.py
+   │   │   ├── normalizer.py     # Persian NLP normalization (Arabic/Persian chars, ZWNJ, diacritics)
+   │   │   └── forwarder.py      # Safe message forwarding with RetryAfter backoff & user locks
+   │   └── main.py               # ApplicationBuilder initialization and handler registration
+   ├── scripts/
+   │   └── migrate_posts.py      # Idempotent script parsing posts.json into SQLite + FTS5
+   ├── tests/
+   │   ├── test_normalizer.py
+   │   ├── test_migration_and_db.py
+   │   └── test_handlers.py
+   ├── telegram_bot_shajare.py   # Thin backward-compatible entry point calling bot.main:main
+   ├── posts.json
+   └── requirements.txt
+
+---
+
+@[plugin:superpowers] Conduct a thorough logical review of the bot's buttons and workflows:
+
+1. Scope of Inspection:
+- Analyze every single button and its exact functionality from a logical perspective across all possible scenarios and cases.
+- Check for any infinite/pointless loops or illogical dead ends in the bot that require fixing, modification, or logical improvement.
+
+2. Reporting Requirement:
+- Report all identified cases in complete detail so I can review them and specify whether each item needs to be fixed or not.
+
+---
+
+@[plugin:superpowers] تمام 10 مورد بالا را خیلی دقیق و کامل اصلاح کن و در آخر از کل پروژه تست بگیر تا درست و کامل کار کند
